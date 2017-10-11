@@ -1,0 +1,4 @@
+/* Adjust the width of the active column */
+.posts th#active {
+	width: 100px;
+}

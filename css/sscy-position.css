@@ -1,0 +1,16 @@
+.league_document_list {
+	list-style: none!important;
+}
+.league_document_list li {
+	display: inline-block;
+	margin: 15px;
+}
+.league_document_list li a {
+	text-align: center;
+}
+.league_document_list .league-icon {
+	font-size: 3em;
+	display: block;
+	width: auto;
+	height: auto;
+}

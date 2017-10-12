@@ -1,7 +1,7 @@
 <?php
 
 // Add the custom post type for document
-function sscy_register_position_type(){
+function sscy_register_jobs_type(){
 	
 	$singular = "Job Posting";
 	$plural = "Job Postings";
@@ -41,7 +41,7 @@ function sscy_register_position_type(){
 		'capability_type'		=> 'page',
 		'map_meta_cap'			=> true,
 		'rewrite'				=> array(
-			'slug'			=> 'position',
+			'slug'			=> 'jobs',
 			'with_front'	=> true,
 			'pages'			=> true,
 			'feeds'			=> false
@@ -52,7 +52,7 @@ function sscy_register_position_type(){
 		)
 	);
 	
-	register_post_type( 'position', $args );
+	register_post_type( 'jobs', $args );
 		
 }
-add_action( 'init', 'sscy_register_position_type' );
+add_action( 'init', 'sscy_register_jobs_type' );

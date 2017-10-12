@@ -37,13 +37,90 @@ if ( !function_exists( 'add_action' ) ) {
   die;
 }
 
-class SSCYJobs {
+class SSCYJobs 
+{
+  function __construct() {
+    add_action( 'init', array( $this, 'custom_post_type' ) );
+  }
 
+  function activate(){
+    // Generate Job Post Type
+    $this->custom_post_type();
+    // Flush the rewrite rules
+    flush_rewrite_rules();
+  }
+
+  function deactivate(){
+    // Flush the rewrite rules
+    flush_rewrite_rules();
+  }
+
+  function custom_post_type(){
+      $singular = "Job Posting";
+      $plural = "Job Postings";
+      
+      $labels = array(
+        'name'        => $plural,
+        'singular_name'   => $singular,
+        'add_name'      => 'Add New',
+        'add_new_item'    => 'Add New ' . $singular,
+        'edit'        => 'Edit',
+        'edit_item'     => 'Edit ' . $singular,
+        'new_item'      => 'New ' . $singular,
+        'view'        => 'View ' . $singular,
+        'view_item'     => 'View ' . $singular,
+        'search_term'   => 'Search ' . $plural,
+        'parent'      => 'Parent ' . $singular,
+        'not_found'     => 'No ' . $plural . ' found',
+        'not_found_in_trash'=> 'No ' . $plural . ' found in trash'
+      );
+      
+      $args = array( 
+        'labels'        => $labels,
+        'public'        => true,
+        'publicly_queryable'  => true,
+        'exclude_from_search'   => false,
+        'show_in_nav_menus'   => true,
+        'show_ui'       => true,
+        'show_in_menu'      => true,
+        'show_in_admin_bar'   => true,
+        'menu_position'     => 6,
+        'menu_icon'       => 'dashicons-star-filled',
+        'can_export'      => true,
+        'delete_with_user'    => false,
+        'hierarchical'      => false,
+        'has_archive'     => true,
+        'query_var'       => true,
+        'capability_type'   => 'page',
+        'map_meta_cap'      => true,
+        'rewrite'       => array(
+          'slug'      => 'jobs',
+          'with_front'  => true,
+          'pages'     => true,
+          'feeds'     => false
+        ),
+        'supports'        => array(
+          'title',
+          'editor'
+        )
+      );
+      
+      register_post_type( 'jobs', $args );
+  }
 }
 
-$sscyJobs = new SSCYJobs();
+if ( class_exists( 'SSCYJobs' )){
+  $sscyJobs = new SSCYJobs();
+}
 
-require_once( plugin_dir_path(__FILE__) . 'sscy-jobs-register.php' );
+// Activation
+register_activation_hook( __FILE__, array( $sscyJobs, 'activate' ) ); 
+
+// Deactivation
+register_deactivation_hook( __FILE__, array( $sscyJobs, 'deactivate' ) );
+
+
+/*
 require_once( plugin_dir_path(__FILE__) . 'sscy-jobs-fields.php' );
 
 function sscy_admin_jobs_enqueue_scripts(){
@@ -137,3 +214,5 @@ function sortable_columns() {
   );
 }
 add_filter( "manage_edit-jobs_sortable_columns", "sortable_columns" );
+
+*/

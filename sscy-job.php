@@ -36,22 +36,63 @@ if ( !function_exists( 'add_action' ) ) {
   echo 'Hey! Get outta here! :P';
   die;
 }
-
+  
 class SSCYJobs 
 {
+  public $plugin; 
+
   function __construct() {
-    add_action( 'init', array( $this, 'custom_post_type' ) );
+    // Store the name of the plugin.
+    $this->create_post_type();
+    $this->plugin = plugin_basename( __FILE__ );
+  }
+
+// Add the custom post type
+  function create_post_type(){
+    add_action( 'init', array( $this, 'custom_post_type' ) );    
+  }  
+
+function sscy_save_jobs( $post_id ) {
+  // Checks save status
+  $is_autosave  = wp_is_post_autosave( $post_id );
+  $is_revision  = wp_is_post_revision( $post_id );
+  $is_valid_nonce = ( isset( $_POST['sscy_jobs_nonce'] ) && wp_verify_nonce( $_POST['sscy_jobs_nonce'], basename(__FILE__) ) ) ? 'true' : 'false';  
+  $sscy_stored_meta = get_post_meta( $post_id );  // Get the data to know if a file already exists for this post 
+    
+  if ( $is_autosave || $is_revision || !$is_valid_nonce ) {
+    die();
+    return; 
+  }   
+
+    if ( isset( $_POST['custom_editor_1'] ) )
+        update_post_meta( $post_id, 'responsibilities', $_POST['custom_editor_1'] );
+
+    if ( isset( $_POST['custom_editor_2'] )  )
+        update_post_meta( $post_id, 'conditions', $_POST['custom_editor_2'] );    
+
+    // Checks for input and saves
+    if( isset( $_POST[ 'active' ] ) ) {
+        update_post_meta( $post_id, 'active', 'active' );
+    } else {
+        update_post_meta( $post_id, 'active', 'inactive' );
+    }
+}
+
+// Register the styles and scripts
+  function register(){
+    add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
+    add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue' ) );    
+    add_action( 'add_meta_boxes', array( $this, 'custom_meta_boxes' ) );
+    add_action( 'save_post', array( $this, 'sscy_save_jobs' ) );  
+    add_filter( 'single_template', array( $this, 'add_template' ) );
   }
 
   function activate(){
-    // Generate Job Post Type
-    $this->custom_post_type();
-    // Flush the rewrite rules
-    flush_rewrite_rules();
+    $this->create_post_type();
+    flush_rewrite_rules( false );
   }
 
   function deactivate(){
-    // Flush the rewrite rules
     flush_rewrite_rules();
   }
 
@@ -89,7 +130,7 @@ class SSCYJobs
         'can_export'      => true,
         'delete_with_user'    => false,
         'hierarchical'      => false,
-        'has_archive'     => true,
+        'has_archive'     => false,
         'query_var'       => true,
         'capability_type'   => 'page',
         'map_meta_cap'      => true,
@@ -107,10 +148,67 @@ class SSCYJobs
       
       register_post_type( 'jobs', $args );
   }
+
+  function custom_meta_boxes(){
+
+      // Define the custom attachment for pages
+      add_meta_box(
+          'sscy_jobs_responsibilities_and_qualifications',
+          'Responsibilities & Qualifications',
+          'sscy_jobs_responsibilities_and_qualifications',
+          'jobs'
+      );
+
+      // Define the custom attachment for pages
+      add_meta_box(
+          'sscy_jobs_working_conditions',
+          'Working Conditions',
+          'sscy_jobs_working_conditions',
+          'jobs'
+      );    
+  
+      // Define the custom attachment for pages
+      add_meta_box(
+          'sscy_jobs_options',
+          'Options',
+          'sscy_jobs_options',
+          'jobs'
+      );
+
+      require_once( plugin_dir_path(__FILE__) . 'sscy-jobs-fields.php' );    
+  }  
+
+  // Add support for page display 
+  function add_template( $single_template )
+  {
+    global $wp_query, $post;
+
+    /* Checks for single template by post type */
+    if ( $post->post_type == 'jobs' ) {
+        if ( file_exists( plugin_dir_path( __FILE__ ) . 'single-job.php' ) ) {
+            return plugin_dir_path( __FILE__ ) . 'single-job.php';
+        }
+    }
+
+    return $single_template;
+  }  
+
+  // ENQUEUE STYLES AND SCRIPTS
+  // Eneueue the styles and scripts for the plugins front end (on the site)
+  function enqueue(){
+    wp_enqueue_style( 'jobsstyle', plugins_url( '/assets/css/sscy-jobs.css', __FILE__ ) );
+    wp_enqueue_script( 'jobsscript', plugins_url( '/assets/js/sscy-jobs.js', __FILE__ ) );
+  }
+  // Enqueue the styles and scripts for the admin of the plugin (in the wp administrator)
+  function admin_enqueue(){
+    wp_enqueue_style( 'jobsadminstyle', plugins_url( '/assets/css/sscy-jobs-admin.css', __FILE__ ) );
+    wp_enqueue_script( 'jobsadminscript', plugins_url( '/assets/js/sscy-jobs-admin.js', __FILE__ ) );
+  }  
 }
 
 if ( class_exists( 'SSCYJobs' )){
   $sscyJobs = new SSCYJobs();
+  $sscyJobs->register();
 }
 
 // Activation
@@ -120,54 +218,9 @@ register_activation_hook( __FILE__, array( $sscyJobs, 'activate' ) );
 register_deactivation_hook( __FILE__, array( $sscyJobs, 'deactivate' ) );
 
 
+
 /*
-require_once( plugin_dir_path(__FILE__) . 'sscy-jobs-fields.php' );
 
-function sscy_admin_jobs_enqueue_scripts(){
-	global $pagenow, $typenow;
-
-	if ( ($pagenow == 'post.php' || $pagenow == 'post-new.php') || $pagenow == 'edit.php' && $typenow == 'jobs' ){
-		wp_enqueue_style( 'sscy_admin_jobs_styles', plugins_url( 'css/sscy-jobs-admin.css', __FILE__ ) );
-	};
-}
-add_action( 'admin_enqueue_scripts', 'sscy_admin_jobs_enqueue_scripts' );
-
-// Include the styles for displaying the jobss
-function sscy_jobs_enqueue_scripts(){
-    wp_enqueue_style( 'bm_jobs_styles', plugins_url( 'css/bm-jobs.css', __FILE__ ) );
-}
-add_action( 'wp_enqueue_scripts', 'sscy_jobs_enqueue_scripts');
-
-// Add the custom meta box for the files.
-function add_jobs_custom_meta_boxes() {
-
-    // Define the custom attachment for pages
-    add_meta_box(
-        'sscy_jobs_responsibilities_and_qualifications',
-        'Responsibilities & Qualifications',
-        'sscy_jobs_responsibilities_and_qualifications',
-        'jobs'
-    );
-
-    // Define the custom attachment for pages
-    add_meta_box(
-        'sscy_jobs_working_conditions',
-        'Working Conditions',
-        'sscy_jobs_working_conditions',
-        'jobs'
-    );    
- 
-    // Define the custom attachment for pages
-    add_meta_box(
-        'sscy_jobs_options',
-        'Options',
-        'sscy_jobs_options',
-        'jobs'
-    );
-
- 
-} // end add_custom_meta_boxes
-add_action('add_meta_boxes', 'add_jobs_custom_meta_boxes');
 
 // Add support for page display 
 function add_posttype_template( $single_template )

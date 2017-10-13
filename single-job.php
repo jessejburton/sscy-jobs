@@ -1,120 +1,57 @@
-<?php get_header(); ?>
-	<?php if( have_posts() ) : while( have_posts() ) : the_post(); ?>
-		<div <?php post_class('clearfix'); ?> itemscope itemtype="http://schema.org/CreativeWork">
-			<div class="content-first">
-				<div class="content-second">
-					<h1 class="the-title entry-title" id="post-<?php the_ID(); ?>" itemprop="headline"><?php the_title(); ?></h1>
-					<?php
-						if(strlen(get_post_meta( $post->ID, 'special_notice_text', true )) > 0){	
-							?><div class="special_notice_text_display"><?php
-								echo sanitize_text_field(get_post_meta( $post->ID, 'special_notice_text', true ));
-							?></div><?php
-						} 
-					?>
+<?php
+/**
+ * The template for displaying all single posts
+ *
+ * @link https://developer.wordpress.org/themes/basics/template-hierarchy/#single-post
+ *
+ * @package WordPress
+ * @subpackage Twenty_Seventeen
+ * @since 1.0
+ * @version 1.0
+ */
 
-					<div class="content-third" itemprop="text">						
-						<div class="entry-content">
-							<?php the_content(); ?>
-						</div>
-					</div>
+get_header(); ?>
 
-					<?php
-						$file1url = get_post_meta(get_the_ID(), 'league_file1', true);
-					    $file2url = get_post_meta(get_the_ID(), 'league_file2', true);
-					    $file3url = get_post_meta(get_the_ID(), 'league_file3', true);
-					    $file4url = get_post_meta(get_the_ID(), 'league_file4', true);
-					    $file5url = get_post_meta(get_the_ID(), 'league_file5', true);
-					    $file6url = get_post_meta(get_the_ID(), 'league_file6', true);
+<div class="wrap">
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
 
-					    if(sizeof($file1url) == 4 || sizeof($file2url) == 4 || sizeof($file3url) == 4 || sizeof($file4url) == 4 || sizeof($file5url) == 4 || sizeof($file6url) == 4){
-					    	?> <h2>Downloads</h2> <ul class="league_document_list" style="list-style: none;"><?php					    		
-					    }
+		<?php
+		// Start the loop.
+		while ( have_posts() ) : the_post();
 
-					    if(sizeof($file1url) == 4 && strlen(get_post_meta(get_the_ID(), 'league_file1_text', true)) > 0){
-					    	?> 
-					    		<li>
-					    			<a target="_blank" href=<?php echo $file1url['url'] ?>>
-					    				<span class="dashicons dashicons-media-default league-icon"></span>
-					    				<?php echo get_post_meta(get_the_ID(), 'league_file1_text', true); ?>
-					    			</a>
-					    		</li>
-					    	<?php
-					    	// If there is a space and then another item add a blank li
-				    		if(sizeof($file3url) == 4){
-				    			?><li>&nbsp;</li><?php
-				    		}
-					    }
-					    if(sizeof($file2url) == 4 && strlen(get_post_meta(get_the_ID(), 'league_file2_text', true)) > 0){
-					    	?> 
-					    		<li>
-					    			<a target="_blank" href=<?php echo $file2url['url'] ?>>
-					    				<span class="dashicons dashicons-media-default league-icon"></span>
-					    				<?php echo get_post_meta(get_the_ID(), 'league_file2_text', true); ?>
-					    			</a>
-					    		</li>
-					    	<?php
-					    	// If there is a space and then another item add a blank li
-				    		if(sizeof($file4url) == 4){
-				    			?><li>&nbsp;</li><?php
-				    		}
-					    }
-					    if(sizeof($file3url) == 4 && strlen(get_post_meta(get_the_ID(), 'league_file3_text', true)) > 0){
-					    	?> 
-					    		<li>
-					    			<a target="_blank" href=<?php echo $file3url['url'] ?>>
-					    				<span class="dashicons dashicons-media-default league-icon"></span>
-					    				<?php echo get_post_meta(get_the_ID(), 'league_file3_text', true); ?>
-					    			</a>
-					    		</li>
-					    	<?php
-					    	// If there is a space and then another item add a blank li
-				    		if(sizeof($file5url) == 4){
-				    			?><li>&nbsp;</li><?php
-				    		}
-					    }
-					    if(sizeof($file4url) == 4 && strlen(get_post_meta(get_the_ID(), 'league_file4_text', true)) > 0){
-					    	?> 
-					    		<li>
-					    			<a target="_blank" href=<?php echo $file4url['url'] ?>>
-					    				<span class="dashicons dashicons-media-default league-icon"></span>
-					    				<?php echo get_post_meta(get_the_ID(), 'league_file4_text', true); ?>
-					    			</a>
-					    		</li>
-					    	<?php
-					    	// If there is a space and then another item add a blank li
-				    		if(sizeof($file6url) == 4){
-				    			?><li>&nbsp;</li><?php
-				    		}
-					    }
-					    if(sizeof($file5url) == 4 && strlen(get_post_meta(get_the_ID(), 'league_file5_text', true)) > 0){
-					    	?> 
-					    		<li>
-					    			<a target="_blank" href=<?php echo $file5url['url'] ?>>
-					    				<span class="dashicons dashicons-media-default league-icon"></span>
-					    				<?php echo get_post_meta(get_the_ID(), 'league_file5_text', true); ?>
-					    			</a>
-					    		</li>
-					    	<?php
-					    }
-					    if(sizeof($file6url) == 4 && strlen(get_post_meta(get_the_ID(), 'league_file6_text', true)) > 0){
-					    	?> 
-					    		<li>
-					    			<a target="_blank" href=<?php echo $file6url['url'] ?>>
-					    				<span class="dashicons dashicons-media-default league-icon"></span>
-					    				<?php echo get_post_meta(get_the_ID(), 'league_file6_text', true); ?>
-					    			</a>
-					    		</li>
-					    	<?php
-					    }
-
-					    if(sizeof($file1url) == 4 || sizeof($file2url) == 4 || sizeof($file3url) == 4 || sizeof($file4url) == 4 || sizeof($file5url) == 4 || sizeof($file6url) == 4){
-					    	?> </ul><?php					    		
-					    }
-					?>
+			?>
+				<h1 class="the-title entry-title" id="post-<?php the_ID(); ?>" itemprop="headline"><?php the_title(); ?></h1>
+				<div class="content-block">
+					<?php the_content(); ?>
 				</div>
-			</div>
-		</div>		
-	<?php endwhile; endif;  ?>
+				<div class="content-block">
+					<h2>Responsibilities & Qualifications</h2>
+					<?php echo get_post_meta(get_the_ID(), 'responsibilities', true); ?>
+				</div>
 
-<?php get_sidebar( 'page' ); ?>
-<?php get_footer(); ?>
+				<div class="content-block">
+					<h2>Working Conditions</h2>
+					<?php echo get_post_meta(get_the_ID(), 'conditions', true); ?>
+				</div>
+			<?php
+			
+				// If comments are open or we have at least one comment, load up the comment template.
+				if ( comments_open() || get_comments_number() ) :
+					comments_template();
+				endif;
+
+				the_post_navigation( array(
+					'prev_text' => '<span class="screen-reader-text">' . __( 'Previous Post', 'twentyseventeen' ) . '</span><span aria-hidden="true" class="nav-subtitle">' . __( 'Previous', 'twentyseventeen' ) . '</span> <span class="nav-title"><span class="nav-title-icon-wrapper">' . twentyseventeen_get_svg( array( 'icon' => 'arrow-left' ) ) . '</span>%title</span>',
+					'next_text' => '<span class="screen-reader-text">' . __( 'Next Post', 'twentyseventeen' ) . '</span><span aria-hidden="true" class="nav-subtitle">' . __( 'Next', 'twentyseventeen' ) . '</span> <span class="nav-title">%title<span class="nav-title-icon-wrapper">' . twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ) . '</span></span>',
+				) );
+
+			endwhile; // End of the loop.
+			?>
+
+		</main><!-- #main -->
+	</div><!-- #primary -->
+	<?php get_sidebar(); ?>
+</div><!-- .wrap -->
+
+<?php get_footer();

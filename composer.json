@@ -1,0 +1,17 @@
+{
+    "name": "burtonmedia/sscy-jobs",
+    "description": "SSCY Job Plugin",
+    "type": "project",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Jesse James Burton",
+            "email": "jesse@burtonmediainc.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {"Inc\\": "./inc"}
+    }
+}

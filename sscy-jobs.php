@@ -32,9 +32,10 @@ Copyright 2005-2015 Automattic, Inc.
 */
 
 // Exit if called directly
-if ( !function_exists( 'add_action' ) ) {
-  echo 'Hey! Get outta here! :P';
-  die;
+defined( 'ABSPATH' ) or die( 'Hey! Get outta here!' );
+
+if ( file_exists( dirname( __FILE__ ) . '/vendor/autoload.php' ) ) {
+  require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 }
   
 class SSCYJobs 

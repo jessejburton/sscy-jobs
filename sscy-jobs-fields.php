@@ -37,14 +37,24 @@ function sscy_jobs_working_conditions( $post ) {
 function sscy_jobs_options( $post ) {
     wp_nonce_field( basename(__FILE__), 'sscy_jobs_nonce' );
     $sscy_jobs_stored_meta = get_post_meta( $post->ID );
+    if ( isset( $sscy_jobs_stored_meta['apply_url'] ) ){
+        $applyURL = $sscy_jobs_stored_meta['apply_url'];
+    } else {
+        $applyURL = '';
+    }
 
     ?>
-        <div class="sscy_meta_row" id="jobs_is_active">
+        <p>
             <label for="active">
                 <input type="checkbox" name="active" id="active" value="yes" <?php if ( isset ( $sscy_jobs_stored_meta['active'] ) ) checked( $sscy_jobs_stored_meta['active'][0], 'active' ); ?> />
                 <?php _e( 'Active', 'prfx-textdomain' )?>
             </label>
-        </div>
+        </p>
+
+        <p>
+            <label for="apply_url">Application Form URL</label><br />
+            <input type="text" name="applu_url" id="apply_url" style="width: 100%;" value="<?php echo $applyURL; ?>" placeholder="http://www.saltspringcentre.com" />          
+        </p>        
     <?php
 }
 

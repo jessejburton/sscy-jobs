@@ -2,3 +2,8 @@
 .posts th#active {
 	width: 100px;
 }
+
+#sscy_jobs_options label {
+	font-weight: bold!important;
+}
+

@@ -1,49 +1,53 @@
 <?php
 /**
  * @package SSCY
- */
+ *
+*/
+	
+get_header();
 
-get_header(); ?>
+?><main><div class="loop">
 
-<div class="wrap">
-	<div id="primary" class="content-area single-job">
-		<main id="main" class="site-main" role="main">
+	<?php
 
-		<?php
-		// Start the loop.
-		while ( have_posts() ) : the_post();
-
-			?>
-				<h1 class="the-title entry-title" id="post-<?php the_ID(); ?>" itemprop="headline"><?php the_title(); ?></h1>
-				<div class="content-block">
+	if (have_posts()) :
+	   while (have_posts()) : the_post(); ?>
+      		<section>
+  				<article>
+  					<p><a href="<?php echo get_post_type_archive_link( 'job' ); ?>"><<< Back to opportunities</a></p>
+	      			<h1 class="the-title entry-title" id="post-<?php the_ID(); ?>" itemprop="headline"><?php the_title(); ?></h1>
 					<?php the_content(); ?>
-				</div>
-				<div class="content-block">
-					<h2>Responsibilities & Qualifications</h2>
-					<?php echo get_post_meta(get_the_ID(), 'responsibilities', true); ?>
-				</div>
+				</article>
+			</section>
 
-				<div class="content-block">
-					<h2>Working Conditions</h2>
-					<?php echo get_post_meta(get_the_ID(), 'conditions', true); ?>
-				</div>
-			<?php
-			
-				// If comments are open or we have at least one comment, load up the comment template.
-				if ( comments_open() || get_comments_number() ) :
-					comments_template();
-				endif;
+			<?php if( !empty( get_post_meta(get_the_ID(), 'responsibilities', true) ) ) { ?>
+				<section class="bright-background">
+					<article>
+						<h2>Responsibilities & Qualifications</h2>
+						<?php echo get_post_meta(get_the_ID(), 'responsibilities', true); ?>
+					</article>
+				</section>
+			<?php } ?>
 
-				the_post_navigation( array(
-					'prev_text' => '<span class="screen-reader-text">' . __( 'Previous Post', 'twentyseventeen' ) . '</span><span aria-hidden="true" class="nav-subtitle">' . __( 'Previous', 'twentyseventeen' ) . '</span> <span class="nav-title"><span class="nav-title-icon-wrapper">' . twentyseventeen_get_svg( array( 'icon' => 'arrow-left' ) ) . '</span>%title</span>',
-					'next_text' => '<span class="screen-reader-text">' . __( 'Next Post', 'twentyseventeen' ) . '</span><span aria-hidden="true" class="nav-subtitle">' . __( 'Next', 'twentyseventeen' ) . '</span> <span class="nav-title">%title<span class="nav-title-icon-wrapper">' . twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ) . '</span></span>',
-				) );
+			<?php if( !empty( get_post_meta(get_the_ID(), 'conditions', true) ) ) { ?>
+				<section>
+					<article>
+						<h2>Working Conditions</h2>
+						<?php echo get_post_meta(get_the_ID(), 'conditions', true); ?>
+					</article>
+				</section>
+			<?php } ?>
 
-			endwhile; // End of the loop.
-			?>
+			<section>
+				<article>
+					<p><input type="button" value="Apply"></p>
+				</article>
+			</section>
+	   <?php
+	   endwhile;
+	endif;
 
-		</main><!-- #main -->
-	</div><!-- #primary -->
-</div><!-- .wrap -->
+?></div></main><?php
 
-<?php get_footer();
+get_footer(); 
+?>

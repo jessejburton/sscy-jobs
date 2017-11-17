@@ -46,7 +46,7 @@ function sscy_jobs_options( $post ) {
     ?>
         <p>
             <label for="active">
-                <input type="checkbox" name="active" id="active" value="yes" <?php if ( isset ( $sscy_jobs_stored_meta['active'] ) ) checked( $sscy_jobs_stored_meta['active'][0], 'active' ); ?> />
+                <input type="checkbox" name="active" id="active" value="yes" <?php if ( isset ( $sscy_jobs_stored_meta['active'] ) ) checked( $sscy_jobs_stored_meta['active'][0], true ); ?> />
                 <?php _e( 'Active', 'prfx-textdomain' )?>
             </label>
         </p>
